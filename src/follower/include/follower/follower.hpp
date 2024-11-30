@@ -118,6 +118,8 @@ class Follower : public rclcpp::Node {
 
         rclcpp::TimerBase::SharedPtr timer_; ///< Timer for periodic publishing.
 
+        geometry_msgs::msg::PoseStamped::SharedPtr trajectory_; ///< Current trajectory.
+
         rclcpp::Subscription<px4_msgs::msg::VehicleGlobalPosition>::SharedPtr globalPosition_sub_; ///< Subscription to global position.
         rclcpp::Subscription<px4_msgs::msg::VehicleCommandAck>::SharedPtr vehicleCommandAck_sub_; ///< Subscription to vehicle command acknowledgment.
 

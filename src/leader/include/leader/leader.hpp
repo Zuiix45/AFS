@@ -7,6 +7,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 
+#include "px4_msgs/msg/trajectory_setpoint.hpp"
 #include "px4_msgs/msg/offboard_control_mode.hpp"
 #include "px4_msgs/msg/vehicle_command.hpp"
 #include "px4_msgs/msg/vehicle_command_ack.hpp"
@@ -43,7 +44,7 @@ class Leader : public rclcpp::Node {
 
         /**
          * @brief Callback function for waypoint subscription.
-         * @param msg Shared pointer to the received PoseStamped message.
+         * @param msg Shared pointer to the received PoseStamped message. 
          */
         void subWaypointCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg);
 
@@ -81,6 +82,9 @@ class Leader : public rclcpp::Node {
 
         rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr waypoint_sub_; ///< Subscription for waypoints.
 
+        rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr offboardControlMode_pub_; ///< Publisher for offboard control mode.
+        rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr trajectorySetpoint_pub_; ///< Publisher for trajectory setpoint.
+        
         rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr currentPose_pub_; ///< Publisher for the current pose.
         rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr offboardControlMode_pub_; ///< Publisher for the offboard control mode.
         rclcpp::Publisher<px4_msgs::msg::VehicleCommand>::SharedPtr vehicleCommand_pub_; ///< Publisher for vehicle commands.

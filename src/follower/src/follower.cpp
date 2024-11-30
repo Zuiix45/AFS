@@ -19,6 +19,7 @@ Follower::Follower() : Node("follower"), exit(false) {
     timer_ = create_wall_timer(100ms, std::bind(&Follower::publishTimerCallback, this));
 
     current_pose_ = std::make_shared<geometry_msgs::msg::PoseStamped>();
+    trajectory_ = std::make_shared<geometry_msgs::msg::PoseStamped>();
 
     this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
     this->arm();
@@ -54,12 +55,11 @@ void Follower::subGlobalPosCallback(const px4_msgs::msg::VehicleGlobalPosition::
 }
 
 void Follower::subTrajectoryCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
-    RCLCPP_INFO(get_logger(), "Trajectory received, position: %f, %f, %f", msg->pose.position.x, msg->pose.position.y, msg->pose.position.z);
+    trajectory_ = msg;
 }
 
 void Follower::subVehicleCommandAckCallback(const px4_msgs::msg::VehicleCommandAck::SharedPtr msg) {
     RCLCPP_INFO(get_logger(), "Command ack received, id: %d, result: %d", msg->command, msg->result);
-
 }
 
 void Follower::pubOffboardControlMode() {
@@ -78,7 +78,10 @@ void Follower::pubTrajectorySetpoint() {
     px4_msgs::msg::TrajectorySetpoint msg;
     msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
     msg.yaw = -3.14;
-    msg.position = {110.0, 200.0, 0.0};
+
+    msg.position[0] = trajectory_->pose.position.x;
+    msg.position[1] = trajectory_->pose.position.y;
+    msg.position[2] = trajectory_->pose.position.z;
 
     trajectorySetpoint_pub_->publish(msg);
 }

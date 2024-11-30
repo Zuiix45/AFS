@@ -28,18 +28,6 @@ void Leader::publishTimerCallback() {
     currentPose_pub_->publish(*current_pose_);
 }
 
-void Leader::pubOffboardControlMode() {
-    px4_msgs::msg::OffboardControlMode msg;
-    msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-    msg.position = true;
-    msg.velocity = true;
-    msg.acceleration = true;
-    msg.attitude = false;
-    msg.body_rate = false;
-
-    offboardControlMode_pub_->publish(msg);
-}
-
 void Leader::pubVehicleCommand(uint16_t command, float param1, float param2, float param3,
                     float param4, float param5, float param6, float param7) {
 
@@ -66,13 +54,36 @@ void Leader::pubVehicleCommand(uint16_t command, float param1, float param2, flo
     vehicleCommand_pub_->publish(msg);
 }
 
+void Leader::pubOffboardControlMode() {
+    px4_msgs::msg::OffboardControlMode msg;
+    msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
+    msg.position = true;
+    msg.velocity = true;
+    msg.acceleration = true;
+    msg.attitude = false;
+    msg.body_rate = false;
+
+    offboardControlMode_pub_->publish(msg);
+}
+
+void Leader::pubTrajectorySetpoint() {
+    px4_msgs::msg::TrajectorySetpoint msg;
+    msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
+    msg.yaw = -3.14;
+
+    msg.position[0] = waypoint_->pose.position.x;
+    msg.position[1] = waypoint_->pose.position.y;
+    msg.position[2] = waypoint_->pose.position.z;
+
+    trajectorySetpoint_pub_->publish(msg);
+}
+
 void Leader::subVehicleCommandAckCallback(const px4_msgs::msg::VehicleCommandAck::SharedPtr msg) {
     RCLCPP_INFO(get_logger(), "Command ack received, id: %d, result: %d", msg->command, msg->result);
 }
 
 void Leader::subWaypointCallback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
-    RCLCPP_INFO(get_logger(), "Waypoint received, position: %f, %f, %f", msg->pose.position.x, msg->pose.position.y, msg->pose.position.z);
-    // TODO: Send waypoint to PX4
+    waypoint_ = msg;
 }
 
 int main(int argc, char * argv[]) {
