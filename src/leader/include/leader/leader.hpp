@@ -29,6 +29,16 @@ class Leader : public rclcpp::Node {
          */
         Leader();
 
+                /**
+         * @brief Arms the vehicle.
+         */
+        void arm();
+
+        /**
+         * @brief Disarms the vehicle.
+         */
+        void disarm();
+
         /**
          * @brief Checks if the node should exit.
          * @return True if the node should exit, false otherwise.
@@ -54,6 +64,31 @@ class Leader : public rclcpp::Node {
         void publishTimerCallback();
 
         /**
+         * @brief Publishes the trajectory setpoint.
+         *
+         * This function is responsible for publishing the current trajectory setpoint
+         * to the appropriate topic or communication channel. It ensures that the
+         * trajectory setpoint is made available for other components or systems that
+         * require this information.
+         */
+        void pubTrajectorySetpoint();
+
+        /**
+         * @brief Publishes a vehicle command with specified parameters.
+         * 
+         * @param command The command to be sent to the vehicle.
+         * @param param1 The first parameter for the command.
+         * @param param2 The second parameter for the command.
+         * @param param3 The third parameter for the command.
+         * @param param4 The fourth parameter for the command.
+         * @param param5 The fifth parameter for the command.
+         * @param param6 The sixth parameter for the command.
+         * @param param7 The seventh parameter for the command.
+         */
+        void pubVehicleCommand(uint16_t command, float param1=0.0, float param2=0.0, float param3=0.0,
+                    float param4=0.0, float param5=0.0, float param6=0.0, float param7=0.0);
+
+        /**
          * @brief Publishes a vehicle command.
          * @param command The command to be sent.
          * @param param1 Optional parameter 1 (default is 0.0).
@@ -75,6 +110,8 @@ class Leader : public rclcpp::Node {
         bool exit; ///< Flag indicating whether the node should exit.
 
         geometry_msgs::msg::PoseStamped::SharedPtr current_pose_; ///< Current pose of the vehicle.
+
+        geometry_msgs::msg::PoseStamped::SharedPtr waypoint_; ///< Current waypoint.
 
         rclcpp::TimerBase::SharedPtr timer_; ///< Timer for periodic publishing.
         

@@ -18,6 +18,25 @@ Leader::Leader() : Node("leader"), exit(false) {
     timer_ = create_wall_timer(100ms, std::bind(&Leader::publishTimerCallback, this));
 
     current_pose_ = std::make_shared<geometry_msgs::msg::PoseStamped>();
+
+    this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
+    this->arm();
+
+    this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_NAV_TAKEOFF, 0, 0, 0, 0, 0, 0, 10);
+
+    this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_DO_CHANGE_SPEED, 1, 100.0, 100.0);
+}
+
+void Leader::arm() {
+    this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 1);
+
+    RCLCPP_INFO(get_logger(), "Arming...");
+}
+
+void Leader::disarm() {
+    this->pubVehicleCommand(VehicleCommand::VEHICLE_CMD_COMPONENT_ARM_DISARM, 0);
+
+    RCLCPP_INFO(get_logger(), "Disarming...");
 }
 
 bool Leader::shouldExit() {
