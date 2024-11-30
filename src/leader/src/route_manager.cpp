@@ -58,7 +58,7 @@ void RouteManager::generateWaypoint(float maxDistance, float angleLimit) {
     float distance = maxDistance * static_cast<float>(rand()) / RAND_MAX;
 
     // PI/2 - angleLimit to PI/2 + angleLimit
-    float angle = M_PI/2 - angleLimit * static_cast<float>(rand() - RAND_MAX/2) / RAND_MAX / 2;
+    float angle = M_PI/2 - angleLimit * static_cast<float>(rand() - RAND_MAX/2) / (RAND_MAX / 2);
 
     newWaypoint.pose.position.x = waypoints.end()[-1].pose.position.x + distance * std::cos(angle);
     newWaypoint.pose.position.y = waypoints.end()[-1].pose.position.y + distance * std::sin(angle);
